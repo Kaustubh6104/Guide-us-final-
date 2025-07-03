@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .user-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .user-list li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Management</h1>
+    <button id="logout">Logout</button>
+    <form id="addUserForm">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <button type="submit">Add User</button>
+    </form>
+    <ul id="userList" class="user-list"></ul>
+
+    <script>
+        const API_BASE_URL = "http://localhost:3000";
+
+        const getAuthHeaders = () => {
+            const token = localStorage.getItem("token");
+            return { Authorization: `Bearer ${token}` };
+        };
+
+        const loadUsers = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/users`, {
+                    headers: getAuthHeaders(),
+                });
+                const users = await response.json();
+                const userList = document.getElementById("userList");
+                userList.innerHTML = "";
+                users.forEach((user) => {
+                    const li = document.createElement("li");
+                    li.textContent = `${user.name} (${user.email})`;
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.onclick = () => editUser(user);
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.onclick = () => deleteUser(user.id);
+                    li.appendChild(editButton);
+                    li.appendChild(deleteButton);
+                    userList.appendChild(li);
+                });
+            } catch (err) {
+                console.error("Failed to load users:", err);
+            }
+        };
+
+        const addUser = async (name, email) => {
+            try {
+                await fetch(`${API_BASE_URL}/add-user`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...getAuthHeaders(),
+                    },
+                    body: JSON.stringify({ name, email }),
+                });
+                loadUsers();
+            } catch (err) {
+                console.error("Failed to add user:", err);
+            }
+        };
+
+        const deleteUser = async (id) => {
+            try {
+                await fetch(`${API_BASE_URL}/delete-user/${id}`, {
+                    method: "DELETE",
+                    headers: getAuthHeaders(),
+                });
+                loadUsers();
+            } catch (err) {
+                console.error("Failed to delete user:", err);
+            }
+        };
+
+        document.getElementById("addUserForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            addUser(name, email);
+        });
+
+        document.getElementById("logout").addEventListener("click", () => {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        });
+
+        loadUsers();
+    </script>
+</body>
+</html>

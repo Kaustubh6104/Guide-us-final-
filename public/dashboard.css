@@ -1,0 +1,69 @@
+/* Common Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Navbar */
+.navbar {
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Container */
+.container {
+    width: 80%;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Heading */
+h3 {
+    color: #333;
+}
+
+/* Buttons */
+.cta-btn {
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    font-size: 16px;
+}
+
+/* Hotel Owner Theme */
+.hotel-owner .navbar {
+    background-color: #ff5733; /* Orange */
+}
+
+.hotel-owner .cta-btn {
+    background-color: #ff5733;
+}
+
+.hotel-owner .cta-btn:hover {
+    background-color: #cc4626;
+}
+
+/* Guide Theme */
+.guide .navbar {
+    background-color: #28a745; /* Green */
+}
+
+.guide .cta-btn {
+    background-color: #28a745;
+}
+
+.guide .cta-btn:hover {
+    background-color: #1e7e34;
+}

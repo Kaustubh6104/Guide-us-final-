@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Guide-Us</title>
+    <link rel="stylesheet" href="contact.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo"><img src="logo.jpg" height="70px" width="70px"></div>
+        <nav>
+            <ul>
+                <li><a href="homepg.html">Home</a></li>
+                <li><a href="guides.html">Guides</a></li>
+                <li><a href="hotel.html">Hotels</a></li>
+                <li><a href="trip-planner.html">Plan Trip</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <h1>Contact Us</h1>
+        <p>Have any questions? Reach out to us and we'll be happy to help!</p>
+
+        <!-- Contact Form -->
+        <form id="contact-form">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" placeholder="Enter subject" required>
+
+            <label for="message">Your Message:</label>
+            <textarea id="message" rows="4" placeholder="Type your message here..." required></textarea>
+
+            <button type="submit">Send Message</button>
+        </form>
+
+        <!-- Direct Contact Info -->
+        <div class="contact-info">
+            <h2>Get in Touch</h2>
+            <p><strong>Email:</strong> support@guide-us.com</p>
+            <p><strong>Phone:</strong> +91 98765 43210</p>
+        </div>
+
+        <!-- Google Maps Embed for Airoli, Navi Mumbai -->
+        <h2>Our Location</h2>
+        <div class="map-container">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.999646460916!2d72.99985661490062!3d19.16183768703502!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b0d1a68b57ff%3A0xa3d6e71cc9b5b5e3!2sAiroli%2C%20Navi%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000"
+                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy">
+            </iframe>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="social-links">
+            <h2>Follow Us</h2>
+            <a href="#" class="social-btn">Facebook</a>
+            <a href="#" class="social-btn">Instagram</a>
+            <a href="#" class="social-btn">Twitter</a>
+        </div>
+    </section>
+
+    <script src="contact.js"></script>
+</body>
+</html>

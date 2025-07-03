@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Owner Dashboard | Guide-Us</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="hotel-owner">
+
+    <nav class="navbar">
+        <h2>Hotel Owner Dashboard</h2>
+        <button onclick="logout()">Logout</button>
+    </nav>
+
+    <div class="container">
+        <h3>Welcome, Hotel Owner!</h3>
+        <p>Manage your hotel listings and bookings.</p>
+
+        <div class="dashboard-content">
+            <button class="cta-btn">Add New Hotel</button>
+            <button class="cta-btn" id="viewBookingsBtn">View Bookings</button>
+            <button class="cta-btn">Update Hotel Details</button>
+        </div>
+
+        <div id="bookingSection" style="display: none;">
+            <h3>Your Bookings</h3>
+            <p id="bookingMessage"></p>
+            <div id="bookingList"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = "http://localhost:4000";
+
+        document.getElementById("viewBookingsBtn").addEventListener("click", async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const bookingMessage = document.getElementById("bookingMessage");
+            const bookingList = document.getElementById("bookingList");
+            const bookingSection = document.getElementById("bookingSection");
+
+            bookingMessage.textContent = "Loading...";
+            bookingList.innerHTML = "";
+            bookingSection.style.display = "block"; // Show booking section
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/get-hotel-bookings`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error("Failed to fetch bookings");
+
+                const data = await response.json();
+
+                if (!data || data.length === 0) {
+                    const isNewUser = localStorage.getItem("hasBookings") === "false";
+                    bookingMessage.textContent = isNewUser ? "No bookings yet." : "No recent bookings.";
+                } else {
+                    localStorage.setItem("hasBookings", "true");
+                    bookingMessage.textContent = "";
+                    data.forEach((booking) => {
+                        const bookingItem = document.createElement("p");
+                        bookingItem.textContent = `Booking: ${booking.customer_name} - ${booking.date}`;
+                        bookingList.appendChild(bookingItem);
+                    });
+                }
+            } catch (err) {
+                console.error("Error fetching bookings:", err);
+                bookingMessage.textContent = "Error loading bookings.";
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        }
+    </script>
+
+</body>
+</html>

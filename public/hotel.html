@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Hotels | Guide-Us</title>
+    <link rel="stylesheet" href="hotel.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo"><img src="logo.jpg" height="70px" width="70px"></div>
+        <nav>
+            <ul>
+                <li><a href="homepg.html">Home</a></li>
+                <li><a href="guides.html">Guides</a></li>
+                <li><a href="hotel.html">Hotels</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <h1>Find & Book Hotels</h1>
+        <input type="text" id="hotel-search-input" placeholder="Enter your destination...">
+        <button onclick="searchHotels()">Search</button>
+    </section>
+
+    <!-- Hotel Listings -->
+     <h2 >Popular hotels</h2>
+    <section class="hotels-container" id="hotels-list">
+        <!-- Hotels will be loaded dynamically here -->
+    </section>
+
+    <script src="hotel.js"></script>
+</body>
+</html>

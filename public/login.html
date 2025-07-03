@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Guide-Us</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Login Form -->
+        <div class="form-container" id="login-form">
+            <h2>Login to Guide-Us</h2>
+            <form id="loginForm">
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit" class="cta-btn">Login</button>
+                <p>New here? <a href="#" onclick="showSignUp()">Sign Up</a></p>
+            </form>
+            <p id="login-error" class="error"></p>
+        </div>
+
+        <!-- Sign-Up Form (Initially Hidden) -->
+        <div class="form-container hidden" id="signup-form">
+            <h2>Create an Account</h2>
+            <form id="signupForm">
+                <input type="text" id="signup-name" placeholder="Full Name" required>
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <input type="password" id="signup-confirm" placeholder="Confirm Password" required>
+                <select id="role" required>
+                    <option value="Traveller">Traveller</option>
+                    <option value="Hotel Owner">Hotel Owner</option>
+                    <option value="Guide">Guide</option>
+                </select>
+                <button type="submit" class="butn">Sign Up</button>
+                <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+            </form>
+            <p id="signup-error" class="error"></p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "http://localhost:4000";
+
+        // Show Sign-Up Form
+        function showSignUp() {
+            document.getElementById("login-form").classList.add("hidden");
+            document.getElementById("signup-form").classList.remove("hidden");
+        }
+
+        // Show Login Form
+        function showLogin() {
+            document.getElementById("signup-form").classList.add("hidden");
+            document.getElementById("login-form").classList.remove("hidden");
+        }
+
+        // Handle Login Form Submission
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+            const errorElement = document.getElementById("login-error");
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password }) // Use 'email' instead of 'username'
+                });
+
+                if (!response.ok) {
+                    throw new Error("Invalid email or password");
+                }
+
+                const data = await response.json();
+                localStorage.setItem("token", data.token); // Store the token in local storage
+                alert("Login successful!");
+                //window.location.href = "homepg.html"; // Redirect to home page
+                // Redirect based on user role
+        if (data.role === "Traveller") {
+            window.location.href = "homepg.html";
+        } else if (data.role === "Hotel Owner") {
+            window.location.href = "hotel_dashboard.html";
+        } else if (data.role === "Guide") {
+            window.location.href = "guide_dashboard.html";
+        }
+            } catch (err) {
+                errorElement.textContent = err.message;
+            }
+        });
+
+        // Handle Sign-Up Form Submission
+        document.getElementById("signupForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("signup-name").value;
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
+            const confirmPassword = document.getElementById("signup-confirm").value;
+            const role = document.getElementById("role").value;
+            const errorElement = document.getElementById("signup-error");
+
+            if (password !== confirmPassword) {
+                errorElement.textContent = "Passwords do not match";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password, role }) // Corrected request
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to register. Please try again.");
+                }
+
+                alert("Sign-up successful! Please log in.");
+                showLogin(); // Redirect to login form
+            } catch (err) {
+                errorElement.textContent = err.message;
+            }
+        });
+    </script>
+
+</body>
+</html>

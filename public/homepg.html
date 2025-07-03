@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide-Us | Explore the World</title>
+    <link rel="stylesheet" href="homepg.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo" > <img src="logo.jpg" id="logo" height="70px" width="70px"></div>
+        <nav>
+            <ul>
+                <li><a href="homepg.html">Home</a></li>
+                <li><a href="dashboard.html">Destinations</a></li>
+                <li><a href="guides.html">Guides</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html" class="btn">Login/Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Plan Your Perfect Trip with Guide-Us</h1>
+        <p>Find local guides, book stays, and explore destinations like never before.</p>
+        <a href="dashboard.html" class="cta-btn">Start Planning</a>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature">
+            <img src="trip.jpg" alt="Trip Planning">
+            <h3>Plan Your Trip</h3>
+            <p>Customize your journey with ease.</p>
+        </div>
+        <div class="feature">
+            <img src="local guide.jpg" alt="Local Guides">
+            <h3>Connect with Guides</h3>
+            <p>Find trusted local guides to enhance your experience.</p>
+        </div>
+        <div class="feature">
+            <img src="hotel.jpg" alt="Hotel Booking">
+            <h3>Book Stays</h3>
+            <p>Find the best hotels and villas at great prices.</p>
+        </div>
+    </section>
+
+    <!-- Traveler Recent Chats Section -->
+<section class="messages-section">
+    <h2>Recent Chats</h2>
+    <div id="travelerChatList" class="chat-list"></div>
+  </section>
+  
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Guide-Us. All Rights Reserved.</p>
+    </footer>
+
+</body>
+
+<script>
+  
+const token = localStorage.getItem("token");
+
+async function loadTravelerChats() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    let travelerId;
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        travelerId = payload.id;
+    } catch (e) {
+        console.error("Invalid token.");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:4000/traveller/recent-chats", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const chats = await res.json();
+
+        const chatList = document.getElementById("travelerChatList");
+        chatList.innerHTML = "";
+
+        if (!chats.length) {
+            chatList.innerHTML = "<p>No recent chats.</p>";
+            return;
+        }
+
+        chats.forEach(chat => {
+            const item = document.createElement("div");
+            item.className = "chat-item";
+
+            const isUnread = chat.sender_id !== travelerId; // Guide sent last message
+
+            item.innerHTML = `
+                <strong>${chat.guide_name}</strong>
+                ${isUnread ? '<span class="badge">●</span>' : ''}
+                <br><small>${chat.message}</small>
+            `;
+
+            item.onclick = () => {
+                window.location.href = `chat.html?guide=${chat.guide_id}`;
+            };
+
+            chatList.appendChild(item);
+        });
+
+    } catch (err) {
+        console.error("Error loading recent chats:", err);
+        document.getElementById("travelerChatList").innerHTML = "<p>Error loading messages.</p>";
+    }
+}
+
+// Auto-load on page load
+window.addEventListener("DOMContentLoaded", loadTravelerChats);
+</script>
+
+
+</html>

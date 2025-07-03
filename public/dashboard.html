@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Guide-Us</title>
+    <link rel="stylesheet" href="user_dashboard.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo"> <img src="logo.jpg" id="logo" height="70px" width="70px" ></div>
+        <nav>
+            <ul>
+                <li><a href="homepg.html">Home</a></li>
+                <li><a href="dashboard.html">Destinations</a></li>
+                <li><a href="guides.html">Guides</a></li>
+                <li><a href="hotel.html">Hotels</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Dashboard Main Section -->
+    <section class="dashboard">
+        <h1>Welcome, <span id="user-name">Traveler</span>!</h1>
+        <p>Plan your next adventure with ease.</p>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search for a destination...">
+            <button onclick="searchDestination()">Search</button>
+        </div>
+
+        <!-- Quick Access Cards -->
+        <div class="quick-access">
+            <div class="card" onclick="navigateTo('guides.html')">
+                <img src="guide 2.jpeg" alt="Find Guides">
+                <h3>Find Local Guides</h3>
+            </div>
+            <div class="card" onclick="navigateTo('hotel.html')">
+                <img src="vilas.jpeg" alt="Book Hotels">
+                <h3>Book Hotels & Villas</h3>
+            </div>
+            <div class="card" onclick="navigateTo('trip-planner.html')">
+                <img src="travel.jpeg" alt="Plan Trip">
+                <h3>Plan Your Trip</h3>
+            </div>
+        </div>
+
+        <!-- Recommended Destinations -->
+        <h2>Popular Destinations</h2>
+        <div class="destinations">
+            <div class="destination-card">
+                <img src="konkan.png" alt="kokan">
+                <h3>konkan</h3>
+            </div>
+            <div class="destination-card">
+                <img src="kolhapur.jpg" alt="kolhaapur">
+                <h3>kolhapur</h3>
+            </div>
+            <div class="destination-card">
+                <img src="mumbai.jpg" alt="mumbai">
+                <h3>Mumbai</h3>
+            </div>
+        </div>
+    </section>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

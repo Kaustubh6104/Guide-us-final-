@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Local Guides | Guide-Us</title>
+    <link rel="stylesheet" href="guides.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo"><img src="logo.jpg" id="logo" height="70px" width="70px"></div>
+        <nav>
+            <ul>
+                <li><a href="homepg.html">Home</a></li>
+                <li><a href="guides.html">Guides</a></li>
+                <li><a href="hotel.html">Hotels</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Search Bar for Finding Guides -->
+    <section class="search-section">
+        <h1>Find Your Perfect Travel Guide</h1>
+        <input type="text" id="destination-input" placeholder="Enter your destination...">
+        <button onclick="searchGuides()">Search</button>
+    </section>
+
+    <!-- Popular Guides Section -->
+    <section class="popular-guides">
+        <h2>Popular Guides</h2>
+        <div class="guides-container" id="popular-guides-list">
+            <!-- Top-rated guides will be loaded dynamically here -->
+        </div>
+    </section>
+
+    <!-- Search Results Section -->
+    <section class="search-results">
+        <h2>Search Results</h2>
+        <div class="guides-container" id="guides-list">
+            <!-- Guides will be loaded dynamically here -->
+        </div>
+    </section>
+
+    <!-- Chat Section (Initially Hidden) -->
+<div id="chatWindow" class="chat-container" style="display: none;">
+    <div class="chat-header">
+        <h3 id="chatTitle">Chat with Guide</h3>
+        <button onclick="closeChat()">X</button>
+    </div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <input type="text" id="chatInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<!-- Tour Modal -->
+<div id="tourModal" class="tour-modal" style="display: none;">
+    <div class="tour-modal-content">
+      <span id="closeTourModal" class="close">&times;</span>
+      <h3>Upcoming Tours</h3>
+      <div id="tourDetailsContainer"></div>
+    </div>
+  </div>
+  
+
+    <script src="guides.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with Guide | Guide-Us</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+        }
+
+        .chat-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .chat-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #ecf0f1;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 70%;
+            line-height: 1.4;
+        }
+
+        .sent {
+            background-color: #3498db;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .received {
+            background-color: #bdc3c7;
+            color: black;
+            align-self: flex-start;
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .chat-input button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-header" id="chatHeader">
+        Chat with Guide
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const guideId = urlParams.get("guide");
+    
+        const chatMessages = document.getElementById("chatMessages");
+        const chatInput = document.getElementById("chatInput");
+    
+        // Set chat title
+        document.getElementById("chatHeader").textContent = `Chat with Guide ${guideId}`;
+    
+        // Load previous messages from server
+        window.addEventListener("DOMContentLoaded", async () => {
+            const token = localStorage.getItem("token");
+            if (!token || !guideId) return;
+    
+            let senderId;
+            try {
+                const payload = JSON.parse(atob(token.split(".")[1]));
+                senderId = payload.id;
+            } catch (e) {
+                console.error("Invalid token");
+                return;
+            }
+    
+            try {
+                const res = await fetch(`http://localhost:4000/get-messages?user1=${senderId}&user2=${guideId}`);
+                const messages = await res.json();
+    
+                chatMessages.innerHTML = "";
+                messages.forEach(msg => {
+                    const msgDiv = document.createElement("div");
+                    msgDiv.className = "message " + (msg.sender_id == senderId ? "sent" : "received");
+                    msgDiv.innerText = msg.message;
+                    chatMessages.appendChild(msgDiv);
+                });
+    
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch (err) {
+                console.error("Error loading messages:", err);
+            }
+        });
+    
+        // Send message to backend + simulate reply
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+    
+            const token = localStorage.getItem("token");
+            if (!token || !guideId) {
+                alert("You're not logged in or guide not found.");
+                return;
+            }
+    
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            const senderId = payload.id;
+            const receiverId = parseInt(guideId);
+    
+            // Display user's message immediately
+            const userMsg = document.createElement("div");
+            userMsg.className = "message sent";
+            userMsg.innerText = text;
+            chatMessages.appendChild(userMsg);
+            chatInput.value = "";
+    
+            try {
+                const response = await fetch("http://localhost:4000/save-message", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json"
+                              ,"Authorization": `Bearer ${token}`
+                     },
+                    body: JSON.stringify({ senderId, receiverId, message: text })
+                });
+    
+                const result = await response.json();
+                if (!result.success) {
+                    alert("Failed to send message.");
+                }
+    
+                // Simulated auto-reply
+                setTimeout(() => {
+                    const reply = document.createElement("div");
+                    reply.className = "message received";
+                    reply.innerText = "Thanks for your message! I'll get back to you soon.";
+                    chatMessages.appendChild(reply);
+                }, 1500);
+    
+            } catch (error) {
+                console.error("Error sending message:", error);
+                alert("An error occurred. Try again.");
+            }
+    
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    
+        // Optional: send message on Enter key
+        chatInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+    
+
+</body>
+</html>

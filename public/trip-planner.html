@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Your Trip | Guide-Us</title>
+    <link rel="stylesheet" href="plan.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo">Guide-Us</div>
+        <nav>
+            <ul>
+                <li><a href="homepg.html">Home</a></li>
+                <li><a href="guides.html">Guides</a></li>
+                <li><a href="hotel.html">Hotels</a></li>
+                <li><a href="trip-planner.html">Plan Trip</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Trip Planner Form -->
+    <section class="trip-planner">
+        <h1>Plan Your Perfect Trip</h1>
+
+        <label for="destination">Choose Your Destination:</label>
+        <input type="text" id="destination" placeholder="Enter a destination...">
+
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date">
+
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date">
+
+        <label for="accommodation">Choose Accommodation:</label>
+        <select id="accommodation">
+            <option value="Hotel">Hotel</option>
+            <option value="Resort">Resort</option>
+            <option value="Hostel">Hostel</option>
+            <option value="Villa">Villa</option>
+        </select>
+
+        <label for="activities">Select Activities:</label>
+        <select id="activities" multiple>
+            <option value="Sightseeing">Sightseeing</option>
+            <option value="Adventure Sports">Adventure Sports</option>
+            <option value="Beach Relaxation">Beach Relaxation</option>
+            <option value="Cultural Tour">Cultural Tour</option>
+            <option value="Wildlife Safari">Wildlife Safari</option>
+        </select>
+
+        <button onclick="generateItinerary()">Generate Itinerary</button>
+
+        <!-- Itinerary Preview -->
+        <div id="itinerary-preview" class="itinerary-box"></div>
+
+        <button onclick="saveTrip()">Save Trip</button>
+    </section>
+
+    <script src="plan.js"></script>
+</body>
+</html>

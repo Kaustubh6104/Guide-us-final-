@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guide Dashboard | Guide-Us</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body class="guide">
+
+  <nav class="navbar">
+    <h2>Guide Dashboard</h2>
+    <button onclick="logout()">Logout</button>
+  </nav>
+
+  <div class="container">
+    <h3>Welcome, Guide!</h3>
+    <p>Manage your tour bookings and schedule.</p>
+
+    <div class="dashboard-content">
+      <button class="cta-btn" id="addTourBtn">Add New Tour</button>
+      <button class="cta-btn" id="viewToursBtn">View Scheduled Tours</button>
+      <button class="cta-btn" id="viewBookingsBtn">View Bookings</button>
+      <button class="cta-btn" id="editProfileBtn">Edit Profile</button>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div id="profileModal" class="modal">
+      <div class="modal-content">
+        <h3>Edit Profile</h3>
+        <label for="locations">Preferred Locations:</label>
+        <input type="text" id="locations" placeholder="Enter locations (comma-separated)">
+        <label for="languages">Languages Spoken:</label>
+        <input type="text" id="languages" placeholder="Enter languages">
+        <label for="experience">Years of Experience:</label>
+        <input type="number" id="experience" placeholder="Enter years of experience">
+        <div class="modal-actions">
+          <button class="save-btn" id="saveProfile">Save</button>
+          <button class="close-btn" id="closeProfile">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Tour Modal -->
+    <div id="tourModal" class="modal">
+      <div class="modal-content">
+        <h3>Add Upcoming Tour</h3>
+        <label for="tourDestination">Destination:</label>
+        <input type="text" id="tourDestination" required>
+        <label for="tourDate">Tour Date:</label>
+        <input type="date" id="tourDate" required>
+        <label for="isInternational">International Tour:</label>
+        <input type="checkbox" id="isInternational">
+        <label for="tourRate">Tour Rate:</label>
+        <input type="number" id="tourRate" required>
+        <label for="tourDescription">Tour Description:</label>
+        <textarea id="tourDescription" placeholder="Itinerary (optional)"></textarea>
+        <div class="modal-actions">
+          <button class="save-btn" id="saveTour">Add Tour</button>
+          <button class="close-btn" id="closeTour">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scheduled Tours Modal -->
+    <div id="scheduledToursModal" class="modal">
+      <div class="modal-content">
+        <h3>Your Scheduled Tours</h3>
+        <div id="scheduledToursList"></div>
+        <button class="close-btn" onclick="document.getElementById('scheduledToursModal').style.display='none'">Close</button>
+      </div>
+    </div>
+
+    <!-- Bookings Modal -->
+    <div id="bookingsModal" class="modal">
+      <div class="modal-content">
+        <h3>Tour Bookings</h3>
+        <div id="bookingsList"></div>
+        <button class="close-btn" id="closeBookings">Close</button>
+      </div>
+    </div>
+
+    <!-- Chat Messages Section -->
+    <div class="messages-section">
+      <h3>Recent Chats</h3>
+      <div id="messageList" class="chat-list"></div>
+    </div>
+
+  </div>
+
+  <!-- Script -->
+  <script>
+    const API_BASE_URL = "http://localhost:4000";
+
+    const editProfileBtn = document.getElementById("editProfileBtn");
+    const saveProfileBtn = document.getElementById("saveProfile");
+    const closeProfileBtn = document.getElementById("closeProfile");
+    const modal = document.getElementById("profileModal");
+
+    const addTourBtn = document.getElementById("addTourBtn");
+    const saveTourBtn = document.getElementById("saveTour");
+    const closeTourBtn = document.getElementById("closeTour");
+    const tourModal = document.getElementById("tourModal");
+
+    const viewToursBtn = document.getElementById("viewToursBtn");
+
+    const viewBookingsBtn = document.getElementById("viewBookingsBtn");
+    const bookingsModal = document.getElementById("bookingsModal");
+    const closeBookingsBtn = document.getElementById("closeBookings");
+    const bookingsList = document.getElementById("bookingsList");
+
+    // 🔒 Logout
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+
+    // 🔄 Load Recent Chats
+    async function loadRecentChats() {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/guide/recent-chats`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        const data = await res.json();
+        const messageList = document.getElementById("messageList");
+        messageList.innerHTML = "";
+
+        if (data.length === 0) {
+          messageList.innerHTML = "<p>No messages yet.</p>";
+        } else {
+          data.forEach(chat => {
+            const item = document.createElement("div");
+            item.className = "chat-item";
+            item.innerHTML = `<strong>${chat.traveler_name}</strong><br><small>${chat.message}</small>`;
+            item.onclick = () => {
+              window.location.href = `chat.html?guide=${chat.traveler_id}`;
+            };
+            messageList.appendChild(item);
+          });
+        }
+
+      } catch (err) {
+        console.error("Error loading recent chats:", err);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", loadRecentChats);
+
+    // 🟢 Open Modals
+    editProfileBtn.onclick = () => modal.style.display = "flex";
+    closeProfileBtn.onclick = () => modal.style.display = "none";
+    addTourBtn.onclick = () => tourModal.style.display = "flex";
+    closeTourBtn.onclick = () => tourModal.style.display = "none";
+
+    // 📥 Save Profile
+    saveProfileBtn.onclick = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return alert("Login expired");
+
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const guideId = payload.id;
+
+      const guideProfile = {
+        id: guideId,
+        locations: document.getElementById("locations").value,
+        languages: document.getElementById("languages").value,
+        experience: document.getElementById("experience").value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/update-guide-profile`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(guideProfile)
+        });
+        const result = await res.json();
+        if (result.success) {
+          alert("Profile updated!");
+          modal.style.display = "none";
+        } else {
+          alert("Error updating profile.");
+        }
+      } catch (err) {
+        alert("Something went wrong.");
+      }
+    };
+
+    // ✅ Save Tour
+    saveTourBtn.onclick = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return alert("Login expired");
+
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const guideId = payload.id;
+
+      const tourData = {
+        guideId,
+        destination: document.getElementById("tourDestination").value,
+        date: document.getElementById("tourDate").value,
+        isInternational: document.getElementById("isInternational").checked,
+        rate: document.getElementById("tourRate").value,
+        description: document.getElementById("tourDescription").value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/guide/add-tour`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(tourData)
+        });
+        const result = await res.json();
+        if (result.success) {
+          alert("Tour added!");
+          tourModal.style.display = "none";
+        } else {
+          alert("Error adding tour.");
+        }
+      } catch (err) {
+        alert("Something went wrong.");
+      }
+    };
+
+    // 📆 View Scheduled Tours
+    viewToursBtn.onclick = async () => {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE_URL}/guide/scheduled-tours`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const tours = await res.json();
+      const listContainer = document.getElementById("scheduledToursList");
+      listContainer.innerHTML = "";
+
+      if (!tours.length) {
+        listContainer.innerHTML = "<p>No scheduled tours.</p>";
+      } else {
+        tours.forEach(tour => {
+          const item = document.createElement("div");
+          item.className = "tour-item";
+          item.innerHTML = `
+            <strong>${tour.destination}</strong> (${tour.date})<br>
+            Type: ${tour.is_international ? "International" : "Domestic"}<br>
+            Rate: ${tour.rate}<br>
+            ${tour.description ? `<em>${tour.description}</em>` : ""}
+            <hr>
+          `;
+          listContainer.appendChild(item);
+        });
+      }
+
+      document.getElementById("scheduledToursModal").style.display = "flex";
+    };
+
+    // 📋 View Bookings
+    viewBookingsBtn.onclick = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const res = await fetch(`${API_BASE_URL}/guide/bookings`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      bookingsList.innerHTML = "";
+
+      if (!data.length) {
+        bookingsList.innerHTML = "<p>No bookings yet.</p>";
+      } else {
+        data.forEach(b => {
+          const div = document.createElement("div");
+          div.className = "booking-item";
+          div.innerHTML = `
+            <strong>${b.traveler_name}</strong> booked tour to <em>${b.destination}</em> on ${new Date(b.tour_date).toDateString()}
+            <hr>`;
+          bookingsList.appendChild(div);
+        });
+      }
+
+      bookingsModal.style.display = "flex";
+    };
+
+    closeBookingsBtn.onclick = () => bookingsModal.style.display = "none";
+  </script>
+
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      width: 350px;
+      border-radius: 8px;
+    }
+    .modal-content input, .modal-content textarea {
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+    .save-btn, .close-btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    .save-btn { background-color: #28a745; }
+    .close-btn { background-color: #dc3545; }
+    .chat-item, .tour-item, .booking-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+  </style>
+
+</body>
+</html>

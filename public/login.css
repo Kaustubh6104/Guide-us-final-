@@ -1,0 +1,93 @@
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 350px;
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    text-align: center;
+}
+
+h2 {
+    color: #004d7a;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #004d7a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:hover {
+    background: #003356;
+}
+
+p {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+p a {
+    color: #004d7a;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+/* Hide Sign-Up Form Initially */
+.hidden {
+    display: none;
+}
+
+.cta-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: #01255a;
+    color: rgb(251, 255, 251);
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.butn{
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: #01255a;
+    color: rgb(251, 255, 251);
+    text-decoration: none;
+    border-radius: 5px;
+}
